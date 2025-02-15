@@ -9,7 +9,102 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      kyc_documents: {
+        Row: {
+          aadhar_back_url: string | null
+          aadhar_front_url: string | null
+          bank_passbook_url: string | null
+          created_at: string
+          id: string
+          pan_card_url: string | null
+          user_id: string | null
+        }
+        Insert: {
+          aadhar_back_url?: string | null
+          aadhar_front_url?: string | null
+          bank_passbook_url?: string | null
+          created_at?: string
+          id?: string
+          pan_card_url?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          aadhar_back_url?: string | null
+          aadhar_front_url?: string | null
+          bank_passbook_url?: string | null
+          created_at?: string
+          id?: string
+          pan_card_url?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      loan_applications: {
+        Row: {
+          created_at: string
+          employment_type: string
+          id: string
+          loan_amount: number
+          loan_purpose: string
+          loan_tenure: number
+          monthly_income: number
+          status: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          employment_type: string
+          id?: string
+          loan_amount: number
+          loan_purpose: string
+          loan_tenure: number
+          monthly_income: number
+          status?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          employment_type?: string
+          id?: string
+          loan_amount?: number
+          loan_purpose?: string
+          loan_tenure?: number
+          monthly_income?: number
+          status?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          address: string | null
+          created_at: string
+          first_name: string | null
+          id: string
+          last_name: string | null
+          pincode: string | null
+          state: string | null
+        }
+        Insert: {
+          address?: string | null
+          created_at?: string
+          first_name?: string | null
+          id: string
+          last_name?: string | null
+          pincode?: string | null
+          state?: string | null
+        }
+        Update: {
+          address?: string | null
+          created_at?: string
+          first_name?: string | null
+          id?: string
+          last_name?: string | null
+          pincode?: string | null
+          state?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

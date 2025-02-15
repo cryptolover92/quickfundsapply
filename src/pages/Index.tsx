@@ -1,23 +1,89 @@
+
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { IndianRupee, Menu, X, Star, ChevronDown, ChevronUp, Check } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast";
 import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+} from "@/components/ui/input-otp";
 
 const Index = () => {
-  const [loanAmount, setLoanAmount] = useState(500000);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [mobileNumber, setMobileNumber] = useState("");
   const [currentStep, setCurrentStep] = useState(1);
+  const [showOTP, setShowOTP] = useState(false);
+  const [otp, setOTP] = useState("");
+  const { toast } = useToast();
 
-  const handleSubmitMobile = (e: React.FormEvent) => {
+  const handleSendOTP = async (e: React.FormEvent) => {
     e.preventDefault();
-    // This will be connected to Supabase later
-    setCurrentStep(2);
+    if (mobileNumber.length !== 10) {
+      toast({
+        title: "Invalid mobile number",
+        description: "Please enter a valid 10-digit mobile number",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const { error } = await supabase.auth.signInWithOtp({
+        phone: `+91${mobileNumber}`,
+      });
+
+      if (error) throw error;
+
+      setShowOTP(true);
+      toast({
+        title: "OTP Sent!",
+        description: "Please check your phone for the OTP",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error sending OTP",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleVerifyOTP = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (otp.length !== 6) {
+      toast({
+        title: "Invalid OTP",
+        description: "Please enter a valid 6-digit OTP",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const { error } = await supabase.auth.verifyOtp({
+        phone: `+91${mobileNumber}`,
+        token: otp,
+        type: 'sms',
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "OTP Verified!",
+        description: "Proceeding to next step...",
+      });
+      setCurrentStep(2);
+    } catch (error: any) {
+      toast({
+        title: "Error verifying OTP",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -83,32 +149,72 @@ const Index = () => {
                 </div>
               </div>
 
-              <form onSubmit={handleSubmitMobile} className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Enter your mobile number
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="tel"
-                      pattern="[0-9]{10}"
-                      placeholder="e.g. 9999999999"
-                      value={mobileNumber}
-                      onChange={(e) => setMobileNumber(e.target.value)}
-                      className="w-full p-3 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
-                      required
-                    />
-                    <p className="text-xs text-gray-500 mt-1">No spam calls, we promise!</p>
+              {!showOTP ? (
+                <form onSubmit={handleSendOTP} className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Enter your mobile number
+                    </label>
+                    <div className="relative">
+                      <Input
+                        type="tel"
+                        pattern="[0-9]{10}"
+                        placeholder="e.g. 9999999999"
+                        value={mobileNumber}
+                        onChange={(e) => setMobileNumber(e.target.value)}
+                        className="w-full p-3"
+                        required
+                      />
+                      <p className="text-xs text-gray-500 mt-1">No spam calls, we promise!</p>
+                    </div>
                   </div>
-                </div>
-                <button 
-                  type="submit"
-                  className="button-gradient text-white w-full px-8 py-4 rounded-full font-medium text-lg hover-lift"
-                >
-                  Check loan eligibility
-                  <span className="block text-sm font-normal">In less than a minute</span>
-                </button>
-              </form>
+                  <Button 
+                    type="submit"
+                    className="w-full px-8 py-6 rounded-full font-medium text-lg"
+                  >
+                    Proceed Next
+                    <span className="block text-sm font-normal">Get OTP on your mobile</span>
+                  </Button>
+                </form>
+              ) : (
+                <form onSubmit={handleVerifyOTP} className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-4">
+                      Enter OTP sent to +91 {mobileNumber}
+                    </label>
+                    <InputOTP
+                      value={otp}
+                      onChange={setOTP}
+                      maxLength={6}
+                      render={({ slots }) => (
+                        <InputOTPGroup className="gap-2">
+                          {slots.map((slot, index) => (
+                            <InputOTPSlot key={index} {...slot} />
+                          ))}
+                        </InputOTPGroup>
+                      )}
+                    />
+                    <div className="mt-2 flex justify-between items-center">
+                      <p className="text-sm text-gray-500">Didn't receive OTP?</p>
+                      <Button
+                        type="button"
+                        variant="link"
+                        onClick={handleSendOTP}
+                        className="text-sm"
+                      >
+                        Resend OTP
+                      </Button>
+                    </div>
+                  </div>
+                  <Button 
+                    type="submit"
+                    className="w-full px-8 py-6 rounded-full font-medium text-lg"
+                  >
+                    Verify OTP
+                    <span className="block text-sm font-normal">and continue to application</span>
+                  </Button>
+                </form>
+              )}
             </motion.div>
           </div>
 
