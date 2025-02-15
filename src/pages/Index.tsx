@@ -1,4 +1,3 @@
-
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { IndianRupee, Menu, X, Star, ChevronDown, ChevronUp, Check } from "lucide-react";
@@ -26,6 +25,8 @@ const Index = () => {
   const [otp, setOTP] = useState("");
   const { toast } = useToast();
 
+  const DEMO_OTP = "123456";
+
   const handleSendOTP = async (e: React.FormEvent) => {
     e.preventDefault();
     if (mobileNumber.length !== 10) {
@@ -37,25 +38,11 @@ const Index = () => {
       return;
     }
 
-    try {
-      const { error } = await supabase.auth.signInWithOtp({
-        phone: `+91${mobileNumber}`,
-      });
-
-      if (error) throw error;
-
-      setShowOTP(true);
-      toast({
-        title: "OTP Sent!",
-        description: "Please check your phone for the OTP",
-      });
-    } catch (error: any) {
-      toast({
-        title: "Error sending OTP",
-        description: error.message,
-        variant: "destructive",
-      });
-    }
+    setShowOTP(true);
+    toast({
+      title: "Demo Mode: OTP Sent!",
+      description: `Use OTP: ${DEMO_OTP} for testing`,
+    });
   };
 
   const handleVerifyOTP = async (e: React.FormEvent) => {
@@ -69,24 +56,16 @@ const Index = () => {
       return;
     }
 
-    try {
-      const { error } = await supabase.auth.verifyOtp({
-        phone: `+91${mobileNumber}`,
-        token: otp,
-        type: 'sms',
-      });
-
-      if (error) throw error;
-
+    if (otp === DEMO_OTP) {
       toast({
         title: "OTP Verified!",
         description: "Proceeding to next step...",
       });
       setCurrentStep(2);
-    } catch (error: any) {
+    } else {
       toast({
-        title: "Error verifying OTP",
-        description: error.message,
+        title: "Invalid OTP",
+        description: "Demo mode: Please use 123456 as OTP",
         variant: "destructive",
       });
     }
