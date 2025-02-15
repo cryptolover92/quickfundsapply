@@ -1,7 +1,7 @@
 
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { Indian } from "lucide-react";
+import { IndianRupee } from "lucide-react";
 
 const Index = () => {
   const [loanAmount, setLoanAmount] = useState(500000);
@@ -33,7 +33,7 @@ const Index = () => {
                 How much do you need?
               </label>
               <div className="flex items-center gap-2 mb-4">
-                <Indian className="text-primary" />
+                <IndianRupee className="text-primary" />
                 <input
                   type="number"
                   value={loanAmount}
