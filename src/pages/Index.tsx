@@ -11,6 +11,12 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 const Index = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -188,8 +194,8 @@ const Index = () => {
                       maxLength={6}
                       render={({ slots }) => (
                         <InputOTPGroup className="gap-2">
-                          {slots.map((slot, index) => (
-                            <InputOTPSlot key={index} {...slot} />
+                          {slots.map((slot, idx) => (
+                            <InputOTPSlot key={idx} {...slot} index={idx} />
                           ))}
                         </InputOTPGroup>
                       )}
