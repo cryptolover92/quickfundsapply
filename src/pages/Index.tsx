@@ -173,12 +173,12 @@ const Index = () => {
                       onChange={setOTP}
                     >
                       <InputOTPGroup className="gap-2">
-                        <InputOTPSlot />
-                        <InputOTPSlot />
-                        <InputOTPSlot />
-                        <InputOTPSlot />
-                        <InputOTPSlot />
-                        <InputOTPSlot />
+                        <InputOTPSlot index={0} />
+                        <InputOTPSlot index={1} />
+                        <InputOTPSlot index={2} />
+                        <InputOTPSlot index={3} />
+                        <InputOTPSlot index={4} />
+                        <InputOTPSlot index={5} />
                       </InputOTPGroup>
                     </InputOTP>
                     <div className="mt-2 flex justify-between items-center">
