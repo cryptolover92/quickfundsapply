@@ -85,27 +85,6 @@ const Index = () => {
         description: "Proceeding to next step...",
       });
       setCurrentStep(2);
-      
-      const { error } = await supabase
-        .from('loan_applications_progress')
-        .insert([
-          { 
-            current_step: 2,
-            personal_info: JSON.stringify({
-              mobile_number: mobileNumber
-            })
-          }
-        ]);
-
-      if (error) {
-        console.error('Error creating loan application:', error);
-        toast({
-          title: "Error",
-          description: "Failed to start loan application. Please try again.",
-          variant: "destructive",
-        });
-        return;
-      }
     } else {
       toast({
         title: "Invalid OTP",
@@ -123,31 +102,6 @@ const Index = () => {
       toast({
         title: "Incomplete Information",
         description: "Please fill in all required fields",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    const personalInfoForStorage = {
-      ...personalInfo,
-      dateOfBirth: personalInfo.dateOfBirth?.toISOString(),
-      mobile_number: mobileNumber
-    };
-
-    const { error } = await supabase
-      .from('loan_applications_progress')
-      .update({ 
-        current_step: 3,
-        personal_info: JSON.stringify(personalInfoForStorage)
-      })
-      .eq('current_step', 2)
-      .single();
-
-    if (error) {
-      console.error('Error updating loan application:', error);
-      toast({
-        title: "Error",
-        description: "Failed to save personal information. Please try again.",
         variant: "destructive",
       });
       return;
