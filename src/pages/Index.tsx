@@ -1,4 +1,3 @@
-
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { IndianRupee, Menu, X, Star, ChevronDown, ChevronUp, Check } from "lucide-react";
@@ -129,7 +128,6 @@ const Index = () => {
       return;
     }
 
-    // Convert Date object to ISO string for JSON storage
     const personalInfoForStorage = {
       ...personalInfo,
       dateOfBirth: personalInfo.dateOfBirth?.toISOString(),
@@ -460,25 +458,8 @@ const Index = () => {
 
       <section className="relative min-h-screen flex items-center justify-center px-4 pt-16">
         <div className="container mx-auto grid md:grid-cols-2 gap-12 items-center">
-          <div>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="w-full max-w-md mx-auto"
-            >
-              {currentStep > 1 && (
-                <div className="mb-8">
-                  <LoanProgressBar currentStep={currentStep} totalSteps={TOTAL_STEPS} />
-                </div>
-              )}
-
-              {renderFormStep()}
-            </motion.div>
-          </div>
-
           <div className="hidden md:block relative">
-            <div className="absolute -top-20 right-0">
+            <div className="absolute -top-20 left-0">
               <div className="glass-card p-4 rounded-xl mb-4 max-w-xs">
                 <h3 className="text-lg font-medium mb-2">Trusted by</h3>
                 <p className="text-3xl font-bold text-primary">4,00,000+</p>
@@ -492,6 +473,23 @@ const Index = () => {
                 <h3 className="text-lg font-medium mb-2">RBI registered NBFC</h3>
               </div>
             </div>
+          </div>
+
+          <div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="w-full max-w-md mx-auto bg-white/95 backdrop-blur-md border-2 border-gray-100 shadow-xl rounded-2xl p-6"
+            >
+              {currentStep > 1 && (
+                <div className="mb-8">
+                  <LoanProgressBar currentStep={currentStep} totalSteps={TOTAL_STEPS} />
+                </div>
+              )}
+
+              {renderFormStep()}
+            </motion.div>
           </div>
         </div>
       </section>
