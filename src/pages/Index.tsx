@@ -1,3 +1,4 @@
+
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { IndianRupee, Menu, X, Star, ChevronDown, ChevronUp, Check } from "lucide-react";
@@ -23,6 +24,12 @@ import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { CalendarIcon } from "lucide-react";
 import LoanProgressBar from "@/components/LoanProgressBar";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 const Index = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -85,9 +92,9 @@ const Index = () => {
         .insert([
           { 
             current_step: 2,
-            personal_info: {
+            personal_info: JSON.stringify({
               mobile_number: mobileNumber
-            }
+            })
           }
         ]);
 
@@ -122,14 +129,18 @@ const Index = () => {
       return;
     }
 
+    // Convert Date object to ISO string for JSON storage
+    const personalInfoForStorage = {
+      ...personalInfo,
+      dateOfBirth: personalInfo.dateOfBirth?.toISOString(),
+      mobile_number: mobileNumber
+    };
+
     const { error } = await supabase
       .from('loan_applications_progress')
       .update({ 
         current_step: 3,
-        personal_info: {
-          ...personalInfo,
-          mobile_number: mobileNumber
-        }
+        personal_info: JSON.stringify(personalInfoForStorage)
       })
       .eq('current_step', 2)
       .single();
