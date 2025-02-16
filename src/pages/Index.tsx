@@ -11,11 +11,18 @@ import {
   InputOTPSlot,
 } from "@/components/ui/input-otp";
 import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
+import { CalendarIcon } from "lucide-react";
+import LoanProgressBar from "@/components/LoanProgressBar";
 
 const Index = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -25,7 +32,17 @@ const Index = () => {
   const [otp, setOTP] = useState("");
   const { toast } = useToast();
 
+  const [personalInfo, setPersonalInfo] = useState({
+    fullName: "",
+    email: "",
+    gender: "",
+    maritalStatus: "",
+    dateOfBirth: null as Date | null,
+    state: "",
+  });
+
   const DEMO_OTP = "123456";
+  const TOTAL_STEPS = 6;
 
   const handleSendOTP = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -62,12 +79,335 @@ const Index = () => {
         description: "Proceeding to next step...",
       });
       setCurrentStep(2);
+      
+      const { error } = await supabase
+        .from('loan_applications_progress')
+        .insert([
+          { 
+            current_step: 2,
+            personal_info: {
+              mobile_number: mobileNumber
+            }
+          }
+        ]);
+
+      if (error) {
+        console.error('Error creating loan application:', error);
+        toast({
+          title: "Error",
+          description: "Failed to start loan application. Please try again.",
+          variant: "destructive",
+        });
+        return;
+      }
     } else {
       toast({
         title: "Invalid OTP",
         description: "Demo mode: Please use 123456 as OTP",
         variant: "destructive",
       });
+    }
+  };
+
+  const handlePersonalInfoSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!personalInfo.fullName || !personalInfo.email || !personalInfo.gender || 
+        !personalInfo.maritalStatus || !personalInfo.dateOfBirth || !personalInfo.state) {
+      toast({
+        title: "Incomplete Information",
+        description: "Please fill in all required fields",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const { error } = await supabase
+      .from('loan_applications_progress')
+      .update({ 
+        current_step: 3,
+        personal_info: {
+          ...personalInfo,
+          mobile_number: mobileNumber
+        }
+      })
+      .eq('current_step', 2)
+      .single();
+
+    if (error) {
+      console.error('Error updating loan application:', error);
+      toast({
+        title: "Error",
+        description: "Failed to save personal information. Please try again.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setCurrentStep(3);
+    toast({
+      title: "Success!",
+      description: "Personal information saved successfully",
+    });
+  };
+
+  const renderFormStep = () => {
+    switch (currentStep) {
+      case 1:
+        return (
+          !showOTP ? (
+            <form onSubmit={handleSendOTP} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Enter your mobile number
+                </label>
+                <div className="relative">
+                  <Input
+                    type="tel"
+                    pattern="[0-9]{10}"
+                    placeholder="e.g. 9999999999"
+                    value={mobileNumber}
+                    onChange={(e) => setMobileNumber(e.target.value)}
+                    className="w-full p-3"
+                    required
+                  />
+                  <p className="text-xs text-gray-500 mt-1">No spam calls, we promise!</p>
+                </div>
+              </div>
+              <Button 
+                type="submit"
+                className="w-full px-8 py-6 rounded-full font-medium text-lg"
+              >
+                Proceed Next
+                <span className="block text-sm font-normal">Get OTP on your mobile</span>
+              </Button>
+            </form>
+          ) : (
+            <form onSubmit={handleVerifyOTP} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-4">
+                  Enter OTP sent to +91 {mobileNumber}
+                </label>
+                <InputOTP
+                  maxLength={6}
+                  value={otp}
+                  onChange={setOTP}
+                >
+                  <InputOTPGroup className="gap-2">
+                    <InputOTPSlot index={0} />
+                    <InputOTPSlot index={1} />
+                    <InputOTPSlot index={2} />
+                    <InputOTPSlot index={3} />
+                    <InputOTPSlot index={4} />
+                    <InputOTPSlot index={5} />
+                  </InputOTPGroup>
+                </InputOTP>
+                <div className="mt-2 flex justify-between items-center">
+                  <p className="text-sm text-gray-500">Didn't receive OTP?</p>
+                  <Button
+                    type="button"
+                    variant="link"
+                    onClick={handleSendOTP}
+                    className="text-sm"
+                  >
+                    Resend OTP
+                  </Button>
+                </div>
+              </div>
+              <Button 
+                type="submit"
+                className="w-full px-8 py-6 rounded-full font-medium text-lg"
+              >
+                Verify OTP
+                <span className="block text-sm font-normal">and continue to application</span>
+              </Button>
+            </form>
+          )
+        );
+      case 2:
+        return (
+          <form onSubmit={handlePersonalInfoSubmit} className="space-y-6">
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Full Name
+                </label>
+                <Input
+                  type="text"
+                  value={personalInfo.fullName}
+                  onChange={(e) => setPersonalInfo({ ...personalInfo, fullName: e.target.value })}
+                  placeholder="Enter your full name"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Email
+                </label>
+                <Input
+                  type="email"
+                  value={personalInfo.email}
+                  onChange={(e) => setPersonalInfo({ ...personalInfo, email: e.target.value })}
+                  placeholder="Enter your email"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Mobile Number
+                </label>
+                <Input
+                  type="tel"
+                  value={mobileNumber}
+                  disabled
+                  className="bg-gray-100"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Gender
+                </label>
+                <Select
+                  value={personalInfo.gender}
+                  onValueChange={(value) => setPersonalInfo({ ...personalInfo, gender: value })}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select gender" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="male">Male</SelectItem>
+                    <SelectItem value="female">Female</SelectItem>
+                    <SelectItem value="other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Marital Status
+                </label>
+                <Select
+                  value={personalInfo.maritalStatus}
+                  onValueChange={(value) => setPersonalInfo({ ...personalInfo, maritalStatus: value })}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select marital status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="single">Single</SelectItem>
+                    <SelectItem value="married">Married</SelectItem>
+                    <SelectItem value="divorced">Divorced</SelectItem>
+                    <SelectItem value="widowed">Widowed</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Date of Birth
+                </label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className={cn(
+                        "w-full justify-start text-left font-normal",
+                        !personalInfo.dateOfBirth && "text-muted-foreground"
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {personalInfo.dateOfBirth ? (
+                        format(personalInfo.dateOfBirth, "PPP")
+                      ) : (
+                        <span>Pick a date</span>
+                      )}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={personalInfo.dateOfBirth}
+                      onSelect={(date) => setPersonalInfo({ ...personalInfo, dateOfBirth: date })}
+                      disabled={(date) =>
+                        date > new Date() || date < new Date("1940-01-01")
+                      }
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  State
+                </label>
+                <Select
+                  value={personalInfo.state}
+                  onValueChange={(value) => setPersonalInfo({ ...personalInfo, state: value })}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select state" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {[
+                      "Andhra Pradesh",
+                      "Arunachal Pradesh",
+                      "Assam",
+                      "Bihar",
+                      "Chhattisgarh",
+                      "Goa",
+                      "Gujarat",
+                      "Haryana",
+                      "Himachal Pradesh",
+                      "Jharkhand",
+                      "Karnataka",
+                      "Kerala",
+                      "Madhya Pradesh",
+                      "Maharashtra",
+                      "Manipur",
+                      "Meghalaya",
+                      "Mizoram",
+                      "Nagaland",
+                      "Odisha",
+                      "Punjab",
+                      "Rajasthan",
+                      "Sikkim",
+                      "Tamil Nadu",
+                      "Telangana",
+                      "Tripura",
+                      "Uttar Pradesh",
+                      "Uttarakhand",
+                      "West Bengal",
+                    ].map((state) => (
+                      <SelectItem key={state} value={state.toLowerCase()}>
+                        {state}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="flex justify-between gap-4">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setCurrentStep(1)}
+                className="flex-1"
+              >
+                ← Back
+              </Button>
+              <Button type="submit" className="flex-1">
+                Next →
+              </Button>
+            </div>
+          </form>
+        );
+      default:
+        return null;
     }
   };
 
@@ -114,94 +454,15 @@ const Index = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
+              className="w-full max-w-md mx-auto"
             >
-              <h1 className="text-4xl md:text-6xl font-bold mb-8 bg-clip-text text-transparent bg-gradient-to-r from-primary-dark to-primary">
-                Get Personal Loan of up to ₹10 Lakhs
-              </h1>
-              
-              <div className="space-y-4 mb-8">
-                <div className="flex items-center gap-2 text-gray-700">
-                  <Check className="text-green-500" />
-                  <span><strong>Paperless</strong> process</span>
+              {currentStep > 1 && (
+                <div className="mb-8">
+                  <LoanProgressBar currentStep={currentStep} totalSteps={TOTAL_STEPS} />
                 </div>
-                <div className="flex items-center gap-2 text-gray-700">
-                  <Check className="text-green-500" />
-                  <span><strong>15 minute</strong> disbursal</span>
-                </div>
-                <div className="flex items-center gap-2 text-gray-700">
-                  <Check className="text-green-500" />
-                  <span><strong>No collateral</strong> required</span>
-                </div>
-              </div>
-
-              {!showOTP ? (
-                <form onSubmit={handleSendOTP} className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Enter your mobile number
-                    </label>
-                    <div className="relative">
-                      <Input
-                        type="tel"
-                        pattern="[0-9]{10}"
-                        placeholder="e.g. 9999999999"
-                        value={mobileNumber}
-                        onChange={(e) => setMobileNumber(e.target.value)}
-                        className="w-full p-3"
-                        required
-                      />
-                      <p className="text-xs text-gray-500 mt-1">No spam calls, we promise!</p>
-                    </div>
-                  </div>
-                  <Button 
-                    type="submit"
-                    className="w-full px-8 py-6 rounded-full font-medium text-lg"
-                  >
-                    Proceed Next
-                    <span className="block text-sm font-normal">Get OTP on your mobile</span>
-                  </Button>
-                </form>
-              ) : (
-                <form onSubmit={handleVerifyOTP} className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-4">
-                      Enter OTP sent to +91 {mobileNumber}
-                    </label>
-                    <InputOTP
-                      maxLength={6}
-                      value={otp}
-                      onChange={setOTP}
-                    >
-                      <InputOTPGroup className="gap-2">
-                        <InputOTPSlot index={0} />
-                        <InputOTPSlot index={1} />
-                        <InputOTPSlot index={2} />
-                        <InputOTPSlot index={3} />
-                        <InputOTPSlot index={4} />
-                        <InputOTPSlot index={5} />
-                      </InputOTPGroup>
-                    </InputOTP>
-                    <div className="mt-2 flex justify-between items-center">
-                      <p className="text-sm text-gray-500">Didn't receive OTP?</p>
-                      <Button
-                        type="button"
-                        variant="link"
-                        onClick={handleSendOTP}
-                        className="text-sm"
-                      >
-                        Resend OTP
-                      </Button>
-                    </div>
-                  </div>
-                  <Button 
-                    type="submit"
-                    className="w-full px-8 py-6 rounded-full font-medium text-lg"
-                  >
-                    Verify OTP
-                    <span className="block text-sm font-normal">and continue to application</span>
-                  </Button>
-                </form>
               )}
+
+              {renderFormStep()}
             </motion.div>
           </div>
 

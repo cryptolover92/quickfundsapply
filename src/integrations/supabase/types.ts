@@ -75,6 +75,42 @@ export type Database = {
         }
         Relationships: []
       }
+      loan_applications_progress: {
+        Row: {
+          created_at: string
+          current_step: number | null
+          emi_details: Json | null
+          id: string
+          kyc_documents: Json | null
+          loan_details: Json | null
+          personal_info: Json | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          current_step?: number | null
+          emi_details?: Json | null
+          id?: string
+          kyc_documents?: Json | null
+          loan_details?: Json | null
+          personal_info?: Json | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          current_step?: number | null
+          emi_details?: Json | null
+          id?: string
+          kyc_documents?: Json | null
+          loan_details?: Json | null
+          personal_info?: Json | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           address: string | null
