@@ -168,17 +168,18 @@ const Index = () => {
                       Enter OTP sent to +91 {mobileNumber}
                     </label>
                     <InputOTP
+                      maxLength={6}
                       value={otp}
                       onChange={setOTP}
-                      maxLength={6}
-                      render={({ slots }) => (
-                        <InputOTPGroup className="gap-2">
-                          {slots.map((slot, idx) => (
-                            <InputOTPSlot key={idx} {...slot} index={idx} />
-                          ))}
-                        </InputOTPGroup>
-                      )}
-                    />
+                      inputMode="numeric"
+                      pattern="\d{6}"
+                    >
+                      <InputOTPGroup>
+                        {Array.from({ length: 6 }).map((_, i) => (
+                          <InputOTPSlot key={i} index={i} />
+                        ))}
+                      </InputOTPGroup>
+                    </InputOTP>
                     <div className="mt-2 flex justify-between items-center">
                       <p className="text-sm text-gray-500">Didn't receive OTP?</p>
                       <Button
