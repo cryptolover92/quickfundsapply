@@ -171,13 +171,14 @@ const Index = () => {
                       maxLength={6}
                       value={otp}
                       onChange={setOTP}
-                      inputMode="numeric"
-                      pattern="\d{6}"
                     >
-                      <InputOTPGroup>
-                        {Array.from({ length: 6 }).map((_, i) => (
-                          <InputOTPSlot key={i} index={i} />
-                        ))}
+                      <InputOTPGroup className="gap-2">
+                        <InputOTPSlot />
+                        <InputOTPSlot />
+                        <InputOTPSlot />
+                        <InputOTPSlot />
+                        <InputOTPSlot />
+                        <InputOTPSlot />
                       </InputOTPGroup>
                     </InputOTP>
                     <div className="mt-2 flex justify-between items-center">
