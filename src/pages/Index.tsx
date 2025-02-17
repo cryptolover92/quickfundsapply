@@ -72,17 +72,36 @@ const Index = () => {
       return;
     }
 
-    const { error } = await supabase.auth.signInWithOtp({
-      phone: `+91${mobileNumber}`,
+    // Instead of phone OTP, we'll use magic link with email
+    const { error } = await supabase.auth.signInWithPassword({
+      email: `${mobileNumber}@demo.com`,
+      password: "demo-password",
     });
 
     if (error) {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive",
-      });
-      return;
+      // If user doesn't exist, create one
+      if (error.message.includes("Invalid login credentials")) {
+        const { error: signUpError } = await supabase.auth.signUp({
+          email: `${mobileNumber}@demo.com`,
+          password: "demo-password",
+        });
+
+        if (signUpError) {
+          toast({
+            title: "Error",
+            description: signUpError.message,
+            variant: "destructive",
+          });
+          return;
+        }
+      } else {
+        toast({
+          title: "Error",
+          description: error.message,
+          variant: "destructive",
+        });
+        return;
+      }
     }
 
     setShowOTP(true);
@@ -104,6 +123,7 @@ const Index = () => {
     }
 
     if (otp === DEMO_OTP) {
+      // Sign in the user
       const { error } = await supabase.auth.signInWithPassword({
         email: `${mobileNumber}@demo.com`,
         password: "demo-password",
@@ -883,59 +903,4 @@ const Index = () => {
                 <p className="text-gray-600 mb-4">{testimonial.comment}</p>
                 <div>
                   <p className="font-semibold">{testimonial.name}</p>
-                  <p className="text-sm text-gray-500">{testimonial.role}</p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <footer className="bg-white py-12 px-4">
-        <div className="container mx-auto max-w-6xl">
-          <div className="grid md:grid-cols-4 gap-8">
-            <div>
-              <h3 className="font-bold text-lg mb-4">Quick Links</h3>
-              <ul className="space-y-2">
-                <li><a href="#" className="text-gray-600 hover:text-primary">About</a></li>
-                <li><a href="#" className="text-gray-600 hover:text-primary">Loans</a></li>
-                <li><a href="#" className="text-gray-600 hover:text-primary">Contact</a></li>
-                <li><a href="#" className="text-gray-600 hover:text-primary">FAQs</a></li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-bold text-lg mb-4">Contact Info</h3>
-              <ul className="space-y-2 text-gray-600">
-                <li>support@loanweb.com</li>
-                <li>1800-123-4567</li>
-                <li>123 Finance Street, Mumbai</li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-bold text-lg mb-4">Legal</h3>
-              <ul className="space-y-2">
-                <li><a href="#" className="text-gray-600 hover:text-primary">Privacy Policy</a></li>
-                <li><a href="#" className="text-gray-600 hover:text-primary">Terms of Service</a></li>
-                <li><a href="#" className="text-gray-600 hover:text-primary">Disclaimer</a></li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-bold text-lg mb-4">Connect With Us</h3>
-              <p className="text-gray-600 mb-4">
-                Stay updated with our latest offers and news
-              </p>
-              <button className="button-gradient text-white px-6 py-2 rounded-full">
-                Subscribe Now
-              </button>
-            </div>
-          </div>
-          <div className="mt-12 pt-8 border-t border-gray-200 text-center text-gray-600">
-            <p>© 2024 LoanWeb. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
-    </div>
-  );
-};
-
-export default Index;
+                  <p className="text-sm text-gray-
