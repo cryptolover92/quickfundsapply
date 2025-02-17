@@ -30,8 +30,10 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Textarea } from "@/components/ui/textarea";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Index = () => {
+  const { session } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [mobileNumber, setMobileNumber] = useState("");
   const [currentStep, setCurrentStep] = useState(1);
@@ -70,6 +72,19 @@ const Index = () => {
       return;
     }
 
+    const { error } = await supabase.auth.signInWithOtp({
+      phone: `+91${mobileNumber}`,
+    });
+
+    if (error) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+      return;
+    }
+
     setShowOTP(true);
     toast({
       title: "Demo Mode: OTP Sent!",
@@ -89,25 +104,34 @@ const Index = () => {
     }
 
     if (otp === DEMO_OTP) {
-      toast({
-        title: "OTP Verified!",
-        description: "Proceeding to next step...",
+      const { error } = await supabase.auth.signInWithPassword({
+        email: `${mobileNumber}@demo.com`,
+        password: "demo-password",
       });
-      setCurrentStep(2);
 
-      const { error } = await supabase
+      if (error) {
+        toast({
+          title: "Error",
+          description: "Failed to verify OTP. Please try again.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const { error: progressError } = await supabase
         .from('loan_applications_progress')
         .insert([
           { 
             current_step: 2,
-            personal_info: JSON.stringify({
+            personal_info: {
               mobile_number: mobileNumber
-            })
+            },
+            user_id: session?.user?.id
           }
         ]);
 
-      if (error) {
-        console.error('Error creating loan application:', error);
+      if (progressError) {
+        console.error('Error creating loan application:', progressError);
         toast({
           title: "Error",
           description: "Failed to start loan application. Please try again.",
@@ -115,6 +139,12 @@ const Index = () => {
         });
         return;
       }
+
+      toast({
+        title: "OTP Verified!",
+        description: "Proceeding to next step...",
+      });
+      setCurrentStep(2);
     } else {
       toast({
         title: "Invalid OTP",
@@ -172,6 +202,15 @@ const Index = () => {
   const handleLoanDetailsSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (!session) {
+      toast({
+        title: "Authentication Required",
+        description: "Please sign in to continue",
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (!loanDetails.loanType || !loanDetails.loanAmount || !loanDetails.employmentType || !loanDetails.annualIncome) {
       toast({
         title: "Incomplete Information",
@@ -185,7 +224,8 @@ const Index = () => {
       .from('loan_applications_progress')
       .update({ 
         current_step: 4,
-        loan_details: JSON.stringify(loanDetails)
+        loan_details: loanDetails,
+        user_id: session.user.id
       })
       .eq('current_step', 3)
       .single();
