@@ -613,39 +613,96 @@ const Index = () => {
         </div>
       </nav>
 
-      <section className="relative min-h-screen flex items-center justify-center px-4 pt-16">
-        <div className="container mx-auto grid md:grid-cols-2 gap-12 items-center">
-          <div className="hidden md:block relative">
-            <div className="absolute -top-20 left-0">
-              <div className="glass-card p-4 rounded-xl mb-4 max-w-xs">
-                <h3 className="text-lg font-medium mb-2">Trusted by</h3>
-                <p className="text-3xl font-bold text-primary">4,00,000+</p>
-                <p className="text-gray-600">Borrowers</p>
-              </div>
-              <div className="glass-card p-4 rounded-xl mb-4 max-w-xs">
-                <h3 className="text-lg font-medium mb-2">Loans Disbursed</h3>
-                <p className="text-3xl font-bold text-primary">₹18,000 Cr.</p>
-              </div>
-              <div className="glass-card p-4 rounded-xl max-w-xs">
-                <h3 className="text-lg font-medium mb-2">RBI registered NBFC</h3>
-              </div>
+      <section className="relative min-h-screen pt-20">
+        <div className="container mx-auto px-4">
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div className="text-left space-y-6">
+              <motion.h1 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="text-4xl md:text-5xl font-bold leading-tight"
+              >
+                Quick & Easy Loan
+                <span className="text-primary block">Application Process</span>
+              </motion.h1>
+              <motion.p 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                className="text-lg text-gray-600"
+              >
+                Get your loan approved in just a few simple steps. 
+                Low interest rates and flexible repayment options available.
+              </motion.p>
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 }}
+                className="flex flex-col md:flex-row gap-4"
+              >
+                <div className="glass-card p-4 rounded-xl">
+                  <h3 className="text-lg font-medium mb-2">Quick Processing</h3>
+                  <p className="text-3xl font-bold text-primary">24 hrs</p>
+                  <p className="text-gray-600">Approval Time</p>
+                </div>
+                <div className="glass-card p-4 rounded-xl">
+                  <h3 className="text-lg font-medium mb-2">Interest Rate</h3>
+                  <p className="text-3xl font-bold text-primary">10.5%</p>
+                  <p className="text-gray-600">Starting from</p>
+                </div>
+              </motion.div>
+            </div>
+
+            <div className="w-full max-w-2xl mx-auto">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className="glass-morphism rounded-2xl p-8 w-full md:w-[40vw] max-w-2xl mx-auto"
+              >
+                {currentStep > 1 && (
+                  <div className="mb-8">
+                    <LoanProgressBar currentStep={currentStep} totalSteps={4} />
+                  </div>
+                )}
+
+                {renderFormStep()}
+              </motion.div>
             </div>
           </div>
+        </div>
+      </section>
 
-          <div>
+      <section className="py-16 px-4 bg-white">
+        <div className="container mx-auto max-w-6xl">
+          <h2 className="text-3xl font-bold text-center mb-12">Why Choose Us?</h2>
+          <div className="grid md:grid-cols-3 gap-8">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="w-full max-w-md mx-auto bg-white/95 backdrop-blur-md border-2 border-gray-100 shadow-xl rounded-2xl p-6"
+              transition={{ delay: 0.1 }}
+              className="glass-card p-6 rounded-xl hover-lift"
             >
-              {currentStep > 1 && (
-                <div className="mb-8">
-                  <LoanProgressBar currentStep={currentStep} totalSteps={TOTAL_STEPS} />
-                </div>
-              )}
-
-              {renderFormStep()}
+              <h3 className="font-semibold text-xl mb-4">Quick Processing</h3>
+              <p className="text-gray-600">Get your loan approved within 24 hours with minimal documentation.</p>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="glass-card p-6 rounded-xl hover-lift"
+            >
+              <h3 className="font-semibold text-xl mb-4">Low Interest Rates</h3>
+              <p className="text-gray-600">Competitive interest rates starting from 10.5% per annum.</p>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="glass-card p-6 rounded-xl hover-lift"
+            >
+              <h3 className="font-semibold text-xl mb-4">Flexible Repayment</h3>
+              <p className="text-gray-600">Choose from flexible repayment options that suit your needs.</p>
             </motion.div>
           </div>
         </div>
