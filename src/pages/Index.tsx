@@ -30,10 +30,8 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Textarea } from "@/components/ui/textarea";
-import { useAuth } from "@/contexts/AuthContext";
 
 const Index = () => {
-  const { session } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [mobileNumber, setMobileNumber] = useState("");
   const [currentStep, setCurrentStep] = useState(1);
@@ -72,38 +70,6 @@ const Index = () => {
       return;
     }
 
-    // Instead of phone OTP, we'll use magic link with email
-    const { error } = await supabase.auth.signInWithPassword({
-      email: `${mobileNumber}@demo.com`,
-      password: "demo-password",
-    });
-
-    if (error) {
-      // If user doesn't exist, create one
-      if (error.message.includes("Invalid login credentials")) {
-        const { error: signUpError } = await supabase.auth.signUp({
-          email: `${mobileNumber}@demo.com`,
-          password: "demo-password",
-        });
-
-        if (signUpError) {
-          toast({
-            title: "Error",
-            description: signUpError.message,
-            variant: "destructive",
-          });
-          return;
-        }
-      } else {
-        toast({
-          title: "Error",
-          description: error.message,
-          variant: "destructive",
-        });
-        return;
-      }
-    }
-
     setShowOTP(true);
     toast({
       title: "Demo Mode: OTP Sent!",
@@ -123,21 +89,6 @@ const Index = () => {
     }
 
     if (otp === DEMO_OTP) {
-      // Sign in the user
-      const { error } = await supabase.auth.signInWithPassword({
-        email: `${mobileNumber}@demo.com`,
-        password: "demo-password",
-      });
-
-      if (error) {
-        toast({
-          title: "Error",
-          description: "Failed to verify OTP. Please try again.",
-          variant: "destructive",
-        });
-        return;
-      }
-
       const { error: progressError } = await supabase
         .from('loan_applications_progress')
         .insert([
@@ -145,8 +96,7 @@ const Index = () => {
             current_step: 2,
             personal_info: {
               mobile_number: mobileNumber
-            },
-            user_id: session?.user?.id
+            }
           }
         ]);
 
@@ -197,7 +147,7 @@ const Index = () => {
       .from('loan_applications_progress')
       .update({ 
         current_step: 3,
-        personal_info: JSON.stringify(personalInfoForStorage)
+        personal_info: personalInfoForStorage
       })
       .eq('current_step', 2)
       .single();
@@ -222,15 +172,6 @@ const Index = () => {
   const handleLoanDetailsSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!session) {
-      toast({
-        title: "Authentication Required",
-        description: "Please sign in to continue",
-        variant: "destructive",
-      });
-      return;
-    }
-
     if (!loanDetails.loanType || !loanDetails.loanAmount || !loanDetails.employmentType || !loanDetails.annualIncome) {
       toast({
         title: "Incomplete Information",
@@ -244,8 +185,7 @@ const Index = () => {
       .from('loan_applications_progress')
       .update({ 
         current_step: 4,
-        loan_details: loanDetails,
-        user_id: session.user.id
+        loan_details: loanDetails
       })
       .eq('current_step', 3)
       .single();
@@ -903,4 +843,15 @@ const Index = () => {
                 <p className="text-gray-600 mb-4">{testimonial.comment}</p>
                 <div>
                   <p className="font-semibold">{testimonial.name}</p>
-                  <p className="text-sm text-gray-
+                  <p className="text-sm text-gray-600">{testimonial.role}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+};
+
+export default Index;
