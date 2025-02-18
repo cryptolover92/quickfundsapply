@@ -21,10 +21,22 @@ export const ReviewApplication = ({
   const { toast } = useToast();
 
   const handleSubmit = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      toast({
+        title: "Error",
+        description: "You must be logged in to submit a loan application.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     const { error } = await supabase
       .from('loan_applications')
       .insert([
         {
+          user_id: user.id,
           loan_amount: Number(loanDetails.loanAmount),
           loan_tenure: 12,
           monthly_income: Number(loanDetails.annualIncome) / 12,
