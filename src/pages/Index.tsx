@@ -132,187 +132,175 @@ const Index = () => {
         </div>
       </nav>
 
-      {/* Hero Section */}
+      {/* Hero Section with Form */}
       <section className="relative min-h-screen pt-20">
         <div className="container mx-auto px-4">
-          {showApplicationForm ? (
-            <div className="grid md:grid-cols-2 gap-12 items-center">
-              <div className="text-left space-y-6">
-                <motion.h1 
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="text-4xl md:text-5xl font-bold leading-tight"
-                >
-                  Quick & Easy Loan
-                  <span className="text-primary block">Application Process</span>
-                </motion.h1>
-                <motion.p 
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2 }}
-                  className="text-lg text-gray-600"
-                >
-                  Get your loan approved in just a few simple steps. 
-                  Low interest rates and flexible repayment options available.
-                </motion.p>
-              </div>
-              <div className="bg-white rounded-lg p-6 shadow-lg">
-                <div className="mb-6">
-                  <LoanProgressBar currentStep={currentStep} totalSteps={4} />
-                </div>
-                {renderFormStep()}
-              </div>
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div className="text-left space-y-6">
+              <motion.h1 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="text-4xl md:text-5xl font-bold leading-tight"
+              >
+                Quick & Easy Loan
+                <span className="text-primary block">Application Process</span>
+              </motion.h1>
+              <motion.p 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                className="text-lg text-gray-600"
+              >
+                Get your loan approved in just a few simple steps. 
+                Low interest rates and flexible repayment options available.
+              </motion.p>
             </div>
-          ) : (
-            <>
-              {/* Loan Types Section */}
-              <div className="py-16">
-                <h2 className="text-3xl font-bold text-center mb-12">Our Loan Services</h2>
-                <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-                  {loanTypes.map((loan, index) => (
-                    <motion.div
-                      key={loan.title}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.1 }}
-                      className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow"
-                    >
-                      <h3 className="text-xl font-semibold mb-3">{loan.title}</h3>
-                      <p className="text-gray-600 mb-4">{loan.description}</p>
-                      <div className="text-sm text-gray-500">
-                        <p>Amount: {loan.amount}</p>
-                        <p>Interest from: {loan.rate}</p>
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
+            <div className="bg-white rounded-lg p-6 shadow-lg">
+              <div className="mb-6">
+                <LoanProgressBar currentStep={currentStep} totalSteps={4} />
               </div>
-
-              {/* Why Choose Us Section */}
-              <div className="py-16 bg-gray-50">
-                <div className="container mx-auto px-4">
-                  <h2 className="text-3xl font-bold text-center mb-12">Why Choose Us?</h2>
-                  <div className="grid md:grid-cols-3 gap-8">
-                    {[
-                      "Low Interest Rates",
-                      "Quick Loan Approval",
-                      "Minimal Documentation",
-                      "100% Online Process",
-                      "24/7 Customer Support",
-                      "Secure Processing"
-                    ].map((feature, index) => (
-                      <motion.div
-                        key={feature}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: index * 0.1 }}
-                        className="flex items-center gap-3 bg-white p-4 rounded-lg shadow"
-                      >
-                        <Check className="text-green-500 flex-shrink-0" />
-                        <span>{feature}</span>
-                      </motion.div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* Testimonials Section */}
-              <div className="py-16">
-                <h2 className="text-3xl font-bold text-center mb-12">Customer Testimonials</h2>
-                <Carousel className="w-full max-w-xl mx-auto">
-                  <CarouselContent>
-                    {testimonials.map((testimonial, index) => (
-                      <CarouselItem key={index}>
-                        <div className="bg-white p-6 rounded-lg shadow-lg text-center">
-                          <div className="flex justify-center gap-1 mb-4">
-                            {Array.from({ length: testimonial.rating }).map((_, i) => (
-                              <Star key={i} className="text-yellow-400 fill-yellow-400" size={20} />
-                            ))}
-                          </div>
-                          <p className="text-gray-600 mb-4">"{testimonial.text}"</p>
-                          <p className="font-semibold">- {testimonial.author}</p>
-                        </div>
-                      </CarouselItem>
-                    ))}
-                  </CarouselContent>
-                  <CarouselPrevious />
-                  <CarouselNext />
-                </Carousel>
-              </div>
-
-              {/* CTA Section */}
-              <div className="py-16 text-center">
-                <h2 className="text-3xl font-bold mb-6">Ready to Get Started?</h2>
-                <p className="text-xl text-gray-600 mb-8">Apply for your loan now and get instant approval!</p>
-                <Button 
-                  size="lg"
-                  onClick={() => setShowApplicationForm(true)}
-                  className="button-gradient text-white px-8 py-3 rounded-full text-lg"
-                >
-                  Apply Now <ArrowRight className="ml-2" />
-                </Button>
-              </div>
-
-              {/* Contact Section */}
-              <div className="py-16 bg-gray-50">
-                <div className="container mx-auto px-4">
-                  <h2 className="text-3xl font-bold text-center mb-12">Contact Us</h2>
-                  <div className="grid md:grid-cols-2 gap-12">
-                    <div className="space-y-6">
-                      <div className="flex items-center gap-4">
-                        <MapPin className="text-primary" />
-                        <div>
-                          <h3 className="font-semibold">Address</h3>
-                          <p className="text-gray-600">XYZ Tower, New Delhi, India</p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-4">
-                        <Phone className="text-primary" />
-                        <div>
-                          <h3 className="font-semibold">Phone</h3>
-                          <p className="text-gray-600">+91 98765 43210</p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-4">
-                        <Mail className="text-primary" />
-                        <div>
-                          <h3 className="font-semibold">Email</h3>
-                          <p className="text-gray-600">support@loanprovider.com</p>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="bg-white rounded-lg p-6 shadow-lg">
-                      <form className="space-y-4">
-                        <input
-                          type="text"
-                          placeholder="Full Name"
-                          className="w-full p-3 border rounded-lg"
-                        />
-                        <input
-                          type="email"
-                          placeholder="Email"
-                          className="w-full p-3 border rounded-lg"
-                        />
-                        <input
-                          type="tel"
-                          placeholder="Mobile Number"
-                          className="w-full p-3 border rounded-lg"
-                        />
-                        <textarea
-                          placeholder="Message"
-                          rows={4}
-                          className="w-full p-3 border rounded-lg"
-                        />
-                        <Button className="w-full">Send Message</Button>
-                      </form>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </>
-          )}
+              {renderFormStep()}
+            </div>
+          </div>
         </div>
       </section>
+
+      {/* Additional Sections */}
+      {!showApplicationForm && (
+        <>
+          {/* Loan Types Section */}
+          <div className="py-16">
+            <h2 className="text-3xl font-bold text-center mb-12">Our Loan Services</h2>
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {loanTypes.map((loan, index) => (
+                <motion.div
+                  key={loan.title}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                  className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow"
+                >
+                  <h3 className="text-xl font-semibold mb-3">{loan.title}</h3>
+                  <p className="text-gray-600 mb-4">{loan.description}</p>
+                  <div className="text-sm text-gray-500">
+                    <p>Amount: {loan.amount}</p>
+                    <p>Interest from: {loan.rate}</p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+
+          {/* Why Choose Us Section */}
+          <div className="py-16 bg-gray-50">
+            <div className="container mx-auto px-4">
+              <h2 className="text-3xl font-bold text-center mb-12">Why Choose Us?</h2>
+              <div className="grid md:grid-cols-3 gap-8">
+                {[
+                  "Low Interest Rates",
+                  "Quick Loan Approval",
+                  "Minimal Documentation",
+                  "100% Online Process",
+                  "24/7 Customer Support",
+                  "Secure Processing"
+                ].map((feature, index) => (
+                  <motion.div
+                    key={feature}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                    className="flex items-center gap-3 bg-white p-4 rounded-lg shadow"
+                  >
+                    <Check className="text-green-500 flex-shrink-0" />
+                    <span>{feature}</span>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Testimonials Section */}
+          <div className="py-16">
+            <h2 className="text-3xl font-bold text-center mb-12">Customer Testimonials</h2>
+            <Carousel className="w-full max-w-xl mx-auto">
+              <CarouselContent>
+                {testimonials.map((testimonial, index) => (
+                  <CarouselItem key={index}>
+                    <div className="bg-white p-6 rounded-lg shadow-lg text-center">
+                      <div className="flex justify-center gap-1 mb-4">
+                        {Array.from({ length: testimonial.rating }).map((_, i) => (
+                          <Star key={i} className="text-yellow-400 fill-yellow-400" size={20} />
+                        ))}
+                      </div>
+                      <p className="text-gray-600 mb-4">"{testimonial.text}"</p>
+                      <p className="font-semibold">- {testimonial.author}</p>
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious />
+              <CarouselNext />
+            </Carousel>
+          </div>
+
+          {/* Contact Section */}
+          <div className="py-16 bg-gray-50">
+            <div className="container mx-auto px-4">
+              <h2 className="text-3xl font-bold text-center mb-12">Contact Us</h2>
+              <div className="grid md:grid-cols-2 gap-12">
+                <div className="space-y-6">
+                  <div className="flex items-center gap-4">
+                    <MapPin className="text-primary" />
+                    <div>
+                      <h3 className="font-semibold">Address</h3>
+                      <p className="text-gray-600">XYZ Tower, New Delhi, India</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <Phone className="text-primary" />
+                    <div>
+                      <h3 className="font-semibold">Phone</h3>
+                      <p className="text-gray-600">+91 98765 43210</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <Mail className="text-primary" />
+                    <div>
+                      <h3 className="font-semibold">Email</h3>
+                      <p className="text-gray-600">support@loanprovider.com</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="bg-white rounded-lg p-6 shadow-lg">
+                  <form className="space-y-4">
+                    <input
+                      type="text"
+                      placeholder="Full Name"
+                      className="w-full p-3 border rounded-lg"
+                    />
+                    <input
+                      type="email"
+                      placeholder="Email"
+                      className="w-full p-3 border rounded-lg"
+                    />
+                    <input
+                      type="tel"
+                      placeholder="Mobile Number"
+                      className="w-full p-3 border rounded-lg"
+                    />
+                    <textarea
+                      placeholder="Message"
+                      rows={4}
+                      className="w-full p-3 border rounded-lg"
+                    />
+                    <Button className="w-full">Send Message</Button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 };
