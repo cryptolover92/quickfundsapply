@@ -141,4 +141,24 @@ const Index = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 }}
-                className="flex flex-col
+                className="flex flex-col space-y-4"
+              >
+                <Button className="w-full md:w-auto">
+                  Start Application
+                </Button>
+              </motion.div>
+            </div>
+            <div className="bg-white rounded-lg p-6 shadow-lg">
+              <div className="mb-6">
+                <LoanProgressBar currentStep={currentStep} totalSteps={5} />
+              </div>
+              {renderFormStep()}
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+};
+
+export default Index;
