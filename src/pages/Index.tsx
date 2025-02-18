@@ -1,19 +1,11 @@
 
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { Menu, X, Star, ChevronDown, ChevronUp, Check } from "lucide-react";
-import { Mail, Phone, MapPin, Globe } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import LoanProgressBar from "@/components/LoanProgressBar";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
 import { MobileVerification } from "@/components/loan-application/MobileVerification";
 import { PersonalInfo } from "@/components/loan-application/PersonalInfo";
 import { LoanDetails } from "@/components/loan-application/LoanDetails";
-import { ReviewApplication } from "@/components/loan-application/ReviewApplication";
 import { SuccessMessage } from "@/components/loan-application/SuccessMessage";
 import { Button } from "@/components/ui/button";
 
@@ -21,21 +13,6 @@ const Index = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const [mobileNumber, setMobileNumber] = useState("");
-  const [personalInfo, setPersonalInfo] = useState({
-    fullName: "",
-    email: "",
-    gender: "",
-    maritalStatus: "",
-    dateOfBirth: null as Date | null,
-    state: "",
-  });
-  const [loanDetails, setLoanDetails] = useState({
-    loanType: "",
-    loanAmount: "",
-    employmentType: "",
-    annualIncome: "",
-    loanPurpose: "",
-  });
 
   const renderFormStep = () => {
     switch (currentStep) {
@@ -64,16 +41,6 @@ const Index = () => {
           />
         );
       case 4:
-        return (
-          <ReviewApplication
-            onNext={() => setCurrentStep(5)}
-            onBack={() => setCurrentStep(3)}
-            personalInfo={personalInfo}
-            loanDetails={loanDetails}
-            mobileNumber={mobileNumber}
-          />
-        );
-      case 5:
         return <SuccessMessage />;
       default:
         return null;
@@ -150,7 +117,7 @@ const Index = () => {
             </div>
             <div className="bg-white rounded-lg p-6 shadow-lg">
               <div className="mb-6">
-                <LoanProgressBar currentStep={currentStep} totalSteps={5} />
+                <LoanProgressBar currentStep={currentStep} totalSteps={4} />
               </div>
               {renderFormStep()}
             </div>

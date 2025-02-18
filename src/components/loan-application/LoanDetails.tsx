@@ -40,7 +40,41 @@ export const LoanDetails = ({ onNext, onBack }: LoanDetailsProps) => {
       return;
     }
 
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      toast({
+        title: "Error",
+        description: "You must be logged in to submit a loan application.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     const { error } = await supabase
+      .from('loan_applications')
+      .insert([
+        {
+          user_id: user.id,
+          loan_amount: Number(loanDetails.loanAmount),
+          loan_tenure: 12,
+          monthly_income: Number(loanDetails.annualIncome) / 12,
+          loan_purpose: loanDetails.loanPurpose,
+          employment_type: loanDetails.employmentType,
+        }
+      ]);
+
+    if (error) {
+      console.error('Error submitting loan application:', error);
+      toast({
+        title: "Error",
+        description: "Failed to submit loan application. Please try again.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const { error: progressError } = await supabase
       .from('loan_applications_progress')
       .update({ 
         current_step: 4,
@@ -49,20 +83,15 @@ export const LoanDetails = ({ onNext, onBack }: LoanDetailsProps) => {
       .eq('current_step', 3)
       .single();
 
-    if (error) {
-      console.error('Error updating loan application:', error);
-      toast({
-        title: "Error",
-        description: "Failed to save loan details. Please try again.",
-        variant: "destructive",
-      });
+    if (progressError) {
+      console.error('Error updating progress:', progressError);
       return;
     }
 
     onNext();
     toast({
       title: "Success!",
-      description: "Loan details saved successfully",
+      description: "Your loan application has been submitted successfully!",
     });
   };
 
@@ -170,7 +199,7 @@ export const LoanDetails = ({ onNext, onBack }: LoanDetailsProps) => {
           ← Back
         </Button>
         <Button type="submit" className="flex-1">
-          Next →
+          Submit Application
         </Button>
       </div>
     </form>
