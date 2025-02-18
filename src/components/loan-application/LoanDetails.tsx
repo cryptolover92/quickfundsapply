@@ -40,22 +40,10 @@ export const LoanDetails = ({ onNext, onBack }: LoanDetailsProps) => {
       return;
     }
 
-    const { data: { user } } = await supabase.auth.getUser();
-    
-    if (!user) {
-      toast({
-        title: "Error",
-        description: "You must be logged in to submit a loan application.",
-        variant: "destructive",
-      });
-      return;
-    }
-
     const { error } = await supabase
       .from('loan_applications')
       .insert([
         {
-          user_id: user.id,
           loan_amount: Number(loanDetails.loanAmount),
           loan_tenure: 12,
           monthly_income: Number(loanDetails.annualIncome) / 12,
@@ -76,12 +64,10 @@ export const LoanDetails = ({ onNext, onBack }: LoanDetailsProps) => {
 
     const { error: progressError } = await supabase
       .from('loan_applications_progress')
-      .update({ 
+      .insert([{ 
         current_step: 4,
         loan_details: loanDetails
-      })
-      .eq('current_step', 3)
-      .single();
+      }]);
 
     if (progressError) {
       console.error('Error updating progress:', progressError);
