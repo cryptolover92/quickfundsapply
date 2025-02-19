@@ -1,4 +1,3 @@
-
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { Menu, X, Star, Check, ArrowRight, Phone, Mail, MapPin } from "lucide-react";
@@ -99,7 +98,7 @@ const Index = () => {
     <div className="min-h-screen bg-gradient-to-b from-white to-secondary">
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200">
-        <div className="container mx-auto px-4">
+        <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center justify-between h-16">
             <a href="/" className="text-2xl font-bold text-primary">LoanWeb</a>
             <button
@@ -109,10 +108,27 @@ const Index = () => {
               {isMenuOpen ? <X /> : <Menu />}
             </button>
             <div className="hidden md:flex items-center gap-8">
-              <a href="#" className="text-gray-600 hover:text-primary">Homepage</a>
+              <a href="#" className="text-gray-600 hover:text-primary">Home</a>
               <a href="#about" className="text-gray-600 hover:text-primary">About Us</a>
+              <div className="relative group">
+                <a href="#services" className="text-gray-600 hover:text-primary flex items-center gap-1">
+                  Services <ArrowRight className="w-4 h-4" />
+                </a>
+                <div className="absolute left-0 mt-2 w-48 bg-white shadow-lg rounded-lg py-2 invisible group-hover:visible transition-all">
+                  <a href="#personal-loan" className="block px-4 py-2 text-gray-600 hover:bg-primary hover:text-white">Personal Loan</a>
+                  <a href="#business-loan" className="block px-4 py-2 text-gray-600 hover:bg-primary hover:text-white">Business Loan</a>
+                  <a href="#home-loan" className="block px-4 py-2 text-gray-600 hover:bg-primary hover:text-white">Home Loan</a>
+                  <a href="#car-loan" className="block px-4 py-2 text-gray-600 hover:bg-primary hover:text-white">Car Loan</a>
+                </div>
+              </div>
               <a href="#contact" className="text-gray-600 hover:text-primary">Contact Us</a>
-              <button className="button-gradient text-white px-6 py-2 rounded-full">
+              <button 
+                onClick={() => {
+                  setShowApplicationForm(true);
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                className="bg-primary hover:bg-primary/90 text-white px-6 py-2 rounded-full transition-all transform hover:scale-105"
+              >
                 Apply Now
               </button>
             </div>
@@ -120,10 +136,26 @@ const Index = () => {
           {isMenuOpen && (
             <div className="md:hidden py-4">
               <div className="flex flex-col gap-4">
-                <a href="#" className="text-gray-600 hover:text-primary">Homepage</a>
+                <a href="#" className="text-gray-600 hover:text-primary">Home</a>
                 <a href="#about" className="text-gray-600 hover:text-primary">About Us</a>
+                <div className="space-y-2">
+                  <p className="text-gray-600">Services</p>
+                  <div className="pl-4 space-y-2">
+                    <a href="#personal-loan" className="block text-gray-600 hover:text-primary">Personal Loan</a>
+                    <a href="#business-loan" className="block text-gray-600 hover:text-primary">Business Loan</a>
+                    <a href="#home-loan" className="block text-gray-600 hover:text-primary">Home Loan</a>
+                    <a href="#car-loan" className="block text-gray-600 hover:text-primary">Car Loan</a>
+                  </div>
+                </div>
                 <a href="#contact" className="text-gray-600 hover:text-primary">Contact Us</a>
-                <button className="button-gradient text-white px-6 py-2 rounded-full">
+                <button 
+                  onClick={() => {
+                    setShowApplicationForm(true);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    setIsMenuOpen(false);
+                  }}
+                  className="bg-primary hover:bg-primary/90 text-white px-6 py-2 rounded-full"
+                >
                   Apply Now
                 </button>
               </div>
@@ -168,32 +200,90 @@ const Index = () => {
       {/* Additional Sections */}
       {!showApplicationForm && (
         <>
-          {/* Loan Types Section */}
-          <div className="py-16">
-            <h2 className="text-3xl font-bold text-center mb-12">Our Loan Services</h2>
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {loanTypes.map((loan, index) => (
-                <motion.div
-                  key={loan.title}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                  className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow"
-                >
-                  <h3 className="text-xl font-semibold mb-3">{loan.title}</h3>
-                  <p className="text-gray-600 mb-4">{loan.description}</p>
-                  <div className="text-sm text-gray-500">
-                    <p>Amount: {loan.amount}</p>
-                    <p>Interest from: {loan.rate}</p>
+          {/* About Us Section */}
+          <div id="about" className="py-16">
+            <div className="max-w-7xl mx-auto px-4">
+              <h2 className="text-3xl font-bold text-center mb-12">About Us</h2>
+              <div className="grid md:grid-cols-2 gap-12">
+                <div className="space-y-6">
+                  <h3 className="text-2xl font-semibold">A Trusted Online Loan Provider</h3>
+                  <p className="text-gray-600">With years of experience in the financial sector, we've helped thousands of customers achieve their financial goals through our hassle-free loan services.</p>
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-3">
+                      <Check className="text-green-500" />
+                      <p>Trust & Transparency</p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <Check className="text-green-500" />
+                      <p>Customer-Centric Approach</p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <Check className="text-green-500" />
+                      <p>Secure & Reliable Processing</p>
+                    </div>
                   </div>
-                </motion.div>
-              ))}
+                </div>
+                <div className="space-y-6">
+                  <h3 className="text-2xl font-semibold">Our Mission</h3>
+                  <p className="text-gray-600">To make loans accessible and hassle-free for everyone, providing transparent and efficient financial solutions.</p>
+                  <h3 className="text-2xl font-semibold">Our Vision</h3>
+                  <p className="text-gray-600">To be the most customer-friendly online loan platform, setting new standards in digital lending.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* How it Works Section */}
+          <div className="py-16 bg-gray-50">
+            <div className="max-w-7xl mx-auto px-4">
+              <h2 className="text-3xl font-bold text-center mb-12">How it Works</h2>
+              <div className="grid md:grid-cols-3 lg:grid-cols-5 gap-8">
+                {[
+                  { step: 1, title: "Check Loan Eligibility" },
+                  { step: 2, title: "Apply Online in Minutes" },
+                  { step: 3, title: "Submit KYC & Documents" },
+                  { step: 4, title: "Instant Processing & Approval" },
+                  { step: 5, title: "Receive Funds in Your Account" }
+                ].map((item) => (
+                  <div key={item.step} className="text-center space-y-4">
+                    <div className="w-12 h-12 bg-primary text-white rounded-full flex items-center justify-center mx-auto text-xl font-bold">
+                      {item.step}
+                    </div>
+                    <h3 className="font-semibold">{item.title}</h3>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Loan Types Section */}
+          <div id="services" className="py-16">
+            <div className="max-w-7xl mx-auto px-4">
+              <h2 className="text-3xl font-bold text-center mb-12">Our Loan Services</h2>
+              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {loanTypes.map((loan, index) => (
+                  <motion.div
+                    key={loan.title}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                    className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow"
+                  >
+                    <h3 className="text-xl font-semibold mb-3">{loan.title}</h3>
+                    <p className="text-gray-600 mb-4">{loan.description}</p>
+                    <div className="text-sm text-gray-500">
+                      <p>Amount: {loan.amount}</p>
+                      <p>Interest from: {loan.rate}</p>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
             </div>
           </div>
 
           {/* Why Choose Us Section */}
           <div className="py-16 bg-gray-50">
-            <div className="container mx-auto px-4">
+            <div className="max-w-7xl mx-auto px-4">
               <h2 className="text-3xl font-bold text-center mb-12">Why Choose Us?</h2>
               <div className="grid md:grid-cols-3 gap-8">
                 {[
@@ -221,31 +311,33 @@ const Index = () => {
 
           {/* Testimonials Section */}
           <div className="py-16">
-            <h2 className="text-3xl font-bold text-center mb-12">Customer Testimonials</h2>
-            <Carousel className="w-full max-w-xl mx-auto">
-              <CarouselContent>
-                {testimonials.map((testimonial, index) => (
-                  <CarouselItem key={index}>
-                    <div className="bg-white p-6 rounded-lg shadow-lg text-center">
-                      <div className="flex justify-center gap-1 mb-4">
-                        {Array.from({ length: testimonial.rating }).map((_, i) => (
-                          <Star key={i} className="text-yellow-400 fill-yellow-400" size={20} />
-                        ))}
+            <div className="max-w-7xl mx-auto px-4">
+              <h2 className="text-3xl font-bold text-center mb-12">Customer Testimonials</h2>
+              <Carousel className="w-full max-w-xl mx-auto">
+                <CarouselContent>
+                  {testimonials.map((testimonial, index) => (
+                    <CarouselItem key={index}>
+                      <div className="bg-white p-6 rounded-lg shadow-lg text-center">
+                        <div className="flex justify-center gap-1 mb-4">
+                          {Array.from({ length: testimonial.rating }).map((_, i) => (
+                            <Star key={i} className="text-yellow-400 fill-yellow-400" size={20} />
+                          ))}
+                        </div>
+                        <p className="text-gray-600 mb-4">"{testimonial.text}"</p>
+                        <p className="font-semibold">- {testimonial.author}</p>
                       </div>
-                      <p className="text-gray-600 mb-4">"{testimonial.text}"</p>
-                      <p className="font-semibold">- {testimonial.author}</p>
-                    </div>
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-              <CarouselPrevious />
-              <CarouselNext />
-            </Carousel>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                <CarouselPrevious />
+                <CarouselNext />
+              </Carousel>
+            </div>
           </div>
 
           {/* Contact Section */}
-          <div className="py-16 bg-gray-50">
-            <div className="container mx-auto px-4">
+          <div id="contact" className="py-16 bg-gray-50">
+            <div className="max-w-7xl mx-auto px-4">
               <h2 className="text-3xl font-bold text-center mb-12">Contact Us</h2>
               <div className="grid md:grid-cols-2 gap-12">
                 <div className="space-y-6">
@@ -299,6 +391,56 @@ const Index = () => {
               </div>
             </div>
           </div>
+
+          {/* Footer Section */}
+          <footer className="bg-gray-900 text-white py-12">
+            <div className="max-w-7xl mx-auto px-4">
+              <div className="grid md:grid-cols-4 gap-8">
+                <div className="space-y-4">
+                  <h3 className="text-xl font-bold">LoanWeb</h3>
+                  <p className="text-gray-400">Your trusted partner for quick and easy loans.</p>
+                </div>
+                <div className="space-y-4">
+                  <h3 className="text-xl font-bold">Quick Links</h3>
+                  <ul className="space-y-2">
+                    <li><a href="#" className="text-gray-400 hover:text-white">Home</a></li>
+                    <li><a href="#about" className="text-gray-400 hover:text-white">About Us</a></li>
+                    <li><a href="#services" className="text-gray-400 hover:text-white">Services</a></li>
+                    <li><a href="#contact" className="text-gray-400 hover:text-white">Contact</a></li>
+                  </ul>
+                </div>
+                <div className="space-y-4">
+                  <h3 className="text-xl font-bold">Our Services</h3>
+                  <ul className="space-y-2">
+                    <li><a href="#personal-loan" className="text-gray-400 hover:text-white">Personal Loan</a></li>
+                    <li><a href="#business-loan" className="text-gray-400 hover:text-white">Business Loan</a></li>
+                    <li><a href="#home-loan" className="text-gray-400 hover:text-white">Home Loan</a></li>
+                    <li><a href="#car-loan" className="text-gray-400 hover:text-white">Car Loan</a></li>
+                  </ul>
+                </div>
+                <div className="space-y-4">
+                  <h3 className="text-xl font-bold">Contact Info</h3>
+                  <ul className="space-y-2">
+                    <li className="flex items-center gap-2">
+                      <Phone size={16} />
+                      <span className="text-gray-400">+91 98765 43210</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Mail size={16} />
+                      <span className="text-gray-400">support@loanprovider.com</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <MapPin size={16} />
+                      <span className="text-gray-400">XYZ Tower, New Delhi, India</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2024 LoanWeb. All rights reserved.</p>
+              </div>
+            </div>
+          </footer>
         </>
       )}
     </div>
