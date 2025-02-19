@@ -17,31 +17,63 @@ const Index = () => {
   const [showApplicationForm, setShowApplicationForm] = useState(false);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-secondary">
+    <div className="min-h-screen bg-gradient-to-b from-white via-[#F1F0FB] to-[#E5DEFF]">
       <Navigation
         isMenuOpen={isMenuOpen}
         setIsMenuOpen={setIsMenuOpen}
         setShowApplicationForm={setShowApplicationForm}
       />
       
-      <Hero
-        currentStep={currentStep}
-        setCurrentStep={setCurrentStep}
-        mobileNumber={mobileNumber}
-        setMobileNumber={setMobileNumber}
-      />
+      <div className="pt-20 space-y-1">
+        <Hero
+          currentStep={currentStep}
+          setCurrentStep={setCurrentStep}
+          mobileNumber={mobileNumber}
+          setMobileNumber={setMobileNumber}
+        />
 
-      {!showApplicationForm && (
-        <>
-          <AboutUs />
-          <HowItWorks />
-          <LoanServices />
-          <WhyChooseUs />
-          <Testimonials />
-          <Contact />
-          <Footer />
-        </>
-      )}
+        {!showApplicationForm && (
+          <div className="space-y-1">
+            <div className="bg-white">
+              <div className="max-w-6xl mx-auto px-6">
+                <AboutUs />
+              </div>
+            </div>
+            
+            <div className="bg-[#F8F7FF]">
+              <div className="max-w-6xl mx-auto px-6">
+                <HowItWorks />
+              </div>
+            </div>
+            
+            <div className="bg-white">
+              <div className="max-w-6xl mx-auto px-6">
+                <LoanServices />
+              </div>
+            </div>
+            
+            <div className="bg-[#F8F7FF]">
+              <div className="max-w-6xl mx-auto px-6">
+                <WhyChooseUs />
+              </div>
+            </div>
+            
+            <div className="bg-white">
+              <div className="max-w-6xl mx-auto px-6">
+                <Testimonials />
+              </div>
+            </div>
+            
+            <div className="bg-[#F8F7FF]">
+              <div className="max-w-6xl mx-auto px-6">
+                <Contact />
+              </div>
+            </div>
+            
+            <Footer />
+          </div>
+        )}
+      </div>
     </div>
   );
 };
