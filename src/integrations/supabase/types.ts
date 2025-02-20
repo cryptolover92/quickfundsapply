@@ -83,6 +83,7 @@ export type Database = {
           id: string
           kyc_documents: Json | null
           loan_details: Json | null
+          mobile_number: string | null
           personal_info: Json | null
           updated_at: string
           user_id: string | null
@@ -94,6 +95,7 @@ export type Database = {
           id?: string
           kyc_documents?: Json | null
           loan_details?: Json | null
+          mobile_number?: string | null
           personal_info?: Json | null
           updated_at?: string
           user_id?: string | null
@@ -105,6 +107,7 @@ export type Database = {
           id?: string
           kyc_documents?: Json | null
           loan_details?: Json | null
+          mobile_number?: string | null
           personal_info?: Json | null
           updated_at?: string
           user_id?: string | null
