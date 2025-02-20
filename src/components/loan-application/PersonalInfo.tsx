@@ -53,17 +53,40 @@ export const PersonalInfo = ({ onNext, onBack, mobileNumber }: PersonalInfoProps
       mobile_number: mobileNumber
     };
 
-    const { error } = await supabase
+    // First, try to find the existing application for this mobile number
+    const { data: existingApplications } = await supabase
       .from('loan_applications_progress')
-      .update({ 
-        current_step: 3,
-        personal_info: personalInfoForStorage
-      })
+      .select('id')
+      .eq('mobile_number', mobileNumber)
       .eq('current_step', 2)
-      .single();
+      .maybeSingle();
 
-    if (error) {
-      console.error('Error updating loan application:', error);
+    let updateError;
+    
+    if (existingApplications) {
+      // Update existing application
+      const { error } = await supabase
+        .from('loan_applications_progress')
+        .update({ 
+          current_step: 3,
+          personal_info: personalInfoForStorage
+        })
+        .eq('id', existingApplications.id);
+      updateError = error;
+    } else {
+      // Create new application
+      const { error } = await supabase
+        .from('loan_applications_progress')
+        .insert({
+          current_step: 3,
+          personal_info: personalInfoForStorage,
+          mobile_number: mobileNumber
+        });
+      updateError = error;
+    }
+
+    if (updateError) {
+      console.error('Error updating loan application:', updateError);
       toast({
         title: "Error",
         description: "Failed to save personal information. Please try again.",
